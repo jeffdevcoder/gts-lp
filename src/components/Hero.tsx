@@ -3,6 +3,20 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
 export default function Hero({ setCurrentSection }: { setCurrentSection?: (i: number) => void }) {
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, index: number, targetId: string) => {
+    const isDesktop = window.innerWidth >= 1024;
+    if (isDesktop && setCurrentSection) {
+      e.preventDefault();
+      setCurrentSection(index);
+    } else {
+      e.preventDefault();
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
     <section className="relative min-h-screen snap-start flex flex-col justify-center pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-background">
         <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full bg-primary/20 blur-[120px] pointer-events-none -z-10" />
@@ -47,11 +61,11 @@ export default function Hero({ setCurrentSection }: { setCurrentSection?: (i: nu
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
               >
-                <a href="#contato" onClick={(e) => { e.preventDefault(); setCurrentSection?.(3); }} className="group flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white text-black font-semibold hover:scale-105 active:scale-95 transition-all">
+                <a href="#contato" onClick={(e) => handleNavClick(e, 3, 'contato')} className="group flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white text-black font-semibold hover:scale-105 active:scale-95 transition-all">
                   Começar Agora
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </a>
-                <a href="#como-funciona" onClick={(e) => { e.preventDefault(); setCurrentSection?.(2); }} className="flex items-center justify-center px-8 py-4 rounded-full bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-all pointer-events-auto cursor-pointer">
+                <a href="#como-funciona" onClick={(e) => handleNavClick(e, 2, 'como-funciona')} className="flex items-center justify-center px-8 py-4 rounded-full bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 transition-all pointer-events-auto cursor-pointer">
                   Ver na prática
                 </a>
               </motion.div>
@@ -62,7 +76,7 @@ export default function Hero({ setCurrentSection }: { setCurrentSection?: (i: nu
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="relative w-full h-[600px] flex items-center justify-center"
+              className="relative w-full h-[600px] hidden lg:flex items-center justify-center"
             >
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-secondary/30 blur-[80px] -z-10 rounded-full"></div>
               

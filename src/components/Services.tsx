@@ -1,6 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Bot, Mic, LayoutDashboard, GraduationCap } from 'lucide-react';
+import { Bot, LayoutDashboard, GraduationCap } from 'lucide-react';
 
 const services = [
   {
@@ -20,19 +19,6 @@ const services = [
   }
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15 }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
-};
-
 export default function Services() {
   return (
     <section className="min-h-screen snap-start flex flex-col justify-center py-24 relative z-10" id="solucoes">
@@ -49,17 +35,14 @@ export default function Services() {
           </p>
         </motion.div>
 
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="grid md:grid-cols-3 gap-6"
-        >
+        <div className="grid md:grid-cols-3 gap-6">
           {services.map((service, i) => (
             <motion.div 
               key={i}
-              variants={itemVariants}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ type: "spring", stiffness: 300, damping: 24, delay: i * 0.1 }}
               className="glass-panel p-8 rounded-3xl hover:bg-white/[0.05] transition-colors group cursor-default"
             >
               <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg">
@@ -71,7 +54,7 @@ export default function Services() {
               </p>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

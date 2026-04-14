@@ -1,16 +1,37 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, Hexagon } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 
-export default function Navbar({ currentSection, setCurrentSection }: { currentSection: number, setCurrentSection: (i: number) => void }) {
+export default function Navbar({ currentSection, setCurrentSection, isDesktop = true }: { currentSection: number, setCurrentSection: (i: number) => void, isDesktop?: boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const scrolled = currentSection > 0;
+  const [mobileScrolled, setMobileScrolled] = useState(false);
+  const scrolled = isDesktop ? currentSection > 0 : mobileScrolled;
 
-  const handleNavClick = (e: React.MouseEvent, index: number) => {
-    e.preventDefault();
-    setCurrentSection(index);
-    setMobileOpen(false);
+  useEffect(() => {
+    if (isDesktop) return;
+    const handleScroll = () => {
+      setMobileScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isDesktop]);
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, index: number, targetId: string) => {
+    if (isDesktop) {
+      e.preventDefault();
+      setCurrentSection(index);
+    } else {
+      // Allow native anchor tag behavior on mobile but close the menu
+      setMobileOpen(false);
+      // Wait, if it's mobile, we can also prevent default and do a smooth scroll natively just in case
+      e.preventDefault();
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+      setMobileOpen(false);
+    }
   };
 
   return (
@@ -24,7 +45,7 @@ export default function Navbar({ currentSection, setCurrentSection }: { currentS
       )}
     >
       <div className="container mx-auto px-6 max-w-7xl flex items-center justify-between">
-        <a href="#hero" onClick={(e) => handleNavClick(e, 0)} className="flex items-center group">
+        <a href="#inicio" onClick={(e) => handleNavClick(e, 0, 'inicio')} className="flex items-center group">
           {/* Using the exact physical PNG file extracted from the chat */}
           <img 
             src="/logo-final-latest.png" 
@@ -34,8 +55,8 @@ export default function Navbar({ currentSection, setCurrentSection }: { currentS
         </a>
 
         <div className="hidden md:flex items-center gap-8">
-          <a href="#solucoes" onClick={(e) => handleNavClick(e, 1)} className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Soluções</a>
-          <a href="#como-funciona" onClick={(e) => handleNavClick(e, 2)} className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Como Funciona</a>
+          <a href="#solucoes" onClick={(e) => handleNavClick(e, 1, 'solucoes')} className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Soluções</a>
+          <a href="#como-funciona" onClick={(e) => handleNavClick(e, 2, 'como-funciona')} className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Como Funciona</a>
           <a href="https://wa.me/5521972706086" target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-sm font-medium transition-all hover:scale-105 active:scale-95">
             Falar com Especialista
           </a>
@@ -49,8 +70,8 @@ export default function Navbar({ currentSection, setCurrentSection }: { currentS
       {/* Mobile Menu */}
       {mobileOpen && (
         <div className="absolute top-full left-0 w-full bg-background/95 backdrop-blur-xl border-b border-white/10 p-4 flex flex-col gap-4 md:hidden">
-          <a href="#solucoes" onClick={(e) => handleNavClick(e, 1)} className="text-slate-300 p-2">Soluções</a>
-          <a href="#como-funciona" onClick={(e) => handleNavClick(e, 2)} className="text-slate-300 p-2">Como Funciona</a>
+          <a href="#solucoes" onClick={(e) => handleNavClick(e, 1, 'solucoes')} className="text-slate-300 p-2">Soluções</a>
+          <a href="#como-funciona" onClick={(e) => handleNavClick(e, 2, 'como-funciona')} className="text-slate-300 p-2">Como Funciona</a>
           <a href="https://wa.me/5521972706086" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)} className="p-3 text-center rounded-lg bg-primary/20 border border-primary/30 text-primary font-medium">
             Falar com Especialista
           </a>
